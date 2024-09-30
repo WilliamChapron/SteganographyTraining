@@ -15,11 +15,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1; 
     }
     
+    HWND hwndWindowI = clientApp->GetWindow()->GetHWND();
+    UIManager* uiManagerI = clientApp->GetUIManager();
 
-    clientApp->m_pUIManager->CreateButton(clientApp->m_pWindow->GetHWND(), 1, 200, 200, 100, 30);    // Crée un bouton
-    clientApp->m_pUIManager->CreateTextField(clientApp->m_pWindow->GetHWND(), 2, 50, 100, 200, 30); // Crée un champ de texte
-    HWND buttonHWND = clientApp->m_pUIManager->GetHWND(1);
-    HWND textFieldHWND = clientApp->m_pUIManager->GetHWND(2); // Récupérer le HWND du champ de texte avec l'ID 2
+    uiManagerI->CreateButton(hwndWindowI, 1, 200, 200, 100, 30);    
+    uiManagerI->CreateTextField(hwndWindowI, 2, 50, 100, 200, 30); 
+    HWND buttonHWND = uiManagerI->GetHWND(1);
+    HWND textFieldHWND = uiManagerI->GetHWND(2); 
 
 
     if (buttonHWND) {
@@ -31,7 +33,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     }
 
 
-    clientApp->m_pWindow->Run();
+    clientApp->GetWindow()->Run();
 
     return 0;
 }

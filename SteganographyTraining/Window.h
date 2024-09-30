@@ -14,8 +14,11 @@ public:
 
     void Run();
 
-    HWND GetHWND() const;
+    inline HWND GetHWND() const { return m_hwnd; }
+
 private:
     HWND m_hwnd;
-    HINSTANCE hInstance;
+    HINSTANCE m_hInstance;
+
+    POINT m_lastClickedPoint;
 };

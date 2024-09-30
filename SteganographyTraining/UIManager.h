@@ -17,15 +17,16 @@ public:
     UIButton* CreateButton(HWND parentHwnd, int id, int x, int y, int width, int height);
     UITextField* CreateTextField(HWND parentHwnd, int id, int x, int y, int width, int height);
 
-    HWND GetHWND(int id) const; 
+    void HandleClickAtPosition(int x, int y);
 
-    UIElement** GetAllElements() {
-        return m_pElements; 
-    }
+
+    // Getter
+    HWND GetHWND(int id) const; 
+    inline UIElement** GetAllElements() {return m_pElements; }
 
 
 private:
-    HINSTANCE hInstance;
+    HINSTANCE m_hInstance;
     UIElement* m_pElements[MAX_ELEMENTS];
-    int elementCount;  
+    int m_elementCount;
 };

@@ -9,13 +9,15 @@ class ClientApp {
 public:
     ClientApp();
     ~ClientApp();
-    
+
     bool Initialize(HINSTANCE hInstance);
 
+    inline Window* GetWindow() const { return m_pWindow; }
+    inline UIManager* GetUIManager() const { return m_pUIManager; }
+    inline std::wstring GetString() const { return m_string; }
+
+private:
     Window* m_pWindow;
     UIManager* m_pUIManager;
-
-    std::wstring string = L"Hello";
-private:
-
+    std::wstring m_string = L"Hello";
 };

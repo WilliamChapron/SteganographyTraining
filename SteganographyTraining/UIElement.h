@@ -9,31 +9,33 @@ enum class UIElementType {
 
 class UIElement {
 public:
-    UIElement(HINSTANCE hInstance, int id, UIElementType type);
+    UIElement(HINSTANCE hInstance, int id, UIElementType type, HWND parentHwnd, int x, int y, int width, int height);
     virtual ~UIElement();
 
-    virtual void Create(HWND parentHwnd, int x, int y, int width, int height) = 0;
+    inline HWND GetHWND() const { return m_hwnd; }
+    inline int GetID() const { return m_id; }
+    inline UIElementType GetType() const { return m_type; }
 
-    inline HWND GetHWND() const { return hwnd; } 
-    inline int GetID() const { return id; }     
-
-    UIElementType GetType() const;
+    inline int GetX() const { return m_x; }
+    inline int GetY() const { return m_y; }
+    inline int GetWidth() const { return m_width; }
+    inline int GetHeight() const { return m_height; }
 
 protected:
-    HWND hwnd;
-    HINSTANCE hInstance;
-    int id;
-    UIElementType type;
+    HWND m_hwnd;
+    HINSTANCE m_hInstance;
+    int m_id;
+    UIElementType m_type;
+    int m_x, m_y, m_width, m_height;  
+    HWND m_parentHwnd;
 };
 
 class UIButton : public UIElement {
 public:
-    UIButton(HINSTANCE hInstance, int id);
-    void Create(HWND parentHwnd, int x, int y, int width, int height) override;
+    UIButton(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height);
 };
 
 class UITextField : public UIElement {
 public:
-    UITextField(HINSTANCE hInstance, int id);
-    void Create(HWND parentHwnd, int x, int y, int width, int height) override;
+    UITextField(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height);
 };
