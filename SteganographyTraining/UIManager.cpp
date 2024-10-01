@@ -12,8 +12,9 @@ UIManager::~UIManager() {
     }
 }
 
-UIButton* UIManager::CreateButton(HWND parentHwnd, int id, int x, int y, int width, int height) {
-    UIButton* button = new UIButton(m_hInstance, id, parentHwnd, x, y, width, height);
+
+UIButton* UIManager::CreateButton(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text) {
+    UIButton* button = new UIButton(m_hInstance, id, parentHwnd, x, y, width, height, color, text);
 
     if (m_elementCount < MAX_ELEMENTS) {
         m_pElements[m_elementCount] = button;
@@ -23,8 +24,9 @@ UIButton* UIManager::CreateButton(HWND parentHwnd, int id, int x, int y, int wid
     return button;
 }
 
-UITextField* UIManager::CreateTextField(HWND parentHwnd, int id, int x, int y, int width, int height) {
-    UITextField* textField = new UITextField(m_hInstance, id, parentHwnd, x, y, width, height);
+
+UITextField* UIManager::CreateTextField(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text) {
+    UITextField* textField = new UITextField(m_hInstance, id, parentHwnd, x, y, width, height, color, text);
 
     if (m_elementCount < MAX_ELEMENTS) {
         m_pElements[m_elementCount] = textField;
@@ -34,6 +36,51 @@ UITextField* UIManager::CreateTextField(HWND parentHwnd, int id, int x, int y, i
     return textField;
 }
 
+
+UICheckBox* UIManager::CreateCheckBox(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text) {
+    UICheckBox* checkBox = new UICheckBox(m_hInstance, id, parentHwnd, x, y, width, height, color, text);
+
+    if (m_elementCount < MAX_ELEMENTS) {
+        m_pElements[m_elementCount] = checkBox;
+        ++m_elementCount;
+    }
+
+    return checkBox;
+}
+
+
+UIRadioButton* UIManager::CreateRadioButton(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text) {
+    UIRadioButton* radioButton = new UIRadioButton(m_hInstance, id, parentHwnd, x, y, width, height, color, text);
+
+    if (m_elementCount < MAX_ELEMENTS) {
+        m_pElements[m_elementCount] = radioButton;
+        ++m_elementCount;
+    }
+
+    return radioButton;
+}
+
+UILabel* UIManager::CreateLabel(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text) {
+    UILabel* label = new UILabel(m_hInstance, id, parentHwnd, x, y, width, height, color, text);
+
+    if (m_elementCount < MAX_ELEMENTS) {
+        m_pElements[m_elementCount] = label;
+        ++m_elementCount;
+    }
+
+    return label;
+}
+
+UIPanel* UIManager::CreatePanel(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text) {
+    UIPanel* panel = new UIPanel(m_hInstance, id, parentHwnd, x, y, width, height, color, text);
+
+    if (m_elementCount < MAX_ELEMENTS) {
+        m_pElements[m_elementCount] = panel;
+        ++m_elementCount;
+    }
+
+    return panel;
+}
 
 HWND UIManager::GetHWND(int id) const {
     for (UIElement* element : m_pElements) {

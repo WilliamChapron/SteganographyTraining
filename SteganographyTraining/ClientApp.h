@@ -16,8 +16,14 @@ public:
     inline UIManager* GetUIManager() const { return m_pUIManager; }
     inline std::wstring GetString() const { return m_string; }
 
+    bool isControlEventStarted = false;
+
+
+
 private:
     Window* m_pWindow;
     UIManager* m_pUIManager;
     std::wstring m_string = L"Hello";
+
+
 };
