@@ -143,6 +143,7 @@
     <ClInclude Include="ClientApp.h" />
     <ClInclude Include="UIElement.h" />
     <ClInclude Include="UIManager.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

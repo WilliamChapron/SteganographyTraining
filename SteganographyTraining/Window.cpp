@@ -47,23 +47,9 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
             ClientApp* clientApp = (ClientApp*)pCreate->lpCreateParams;
             SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)clientApp);
         }
-        SetTimer(hwnd, 1, 16, NULL);
+        //SetTimer(hwnd, 1, 16, NULL);
         break;
     }
-
-    case WM_TIMER: {
-        ClientApp* clientApp = (ClientApp*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-        if (!clientApp) {
-            break;
-        }
-
-        UIManager* uiManagerI = clientApp->GetUIManager();
-        if (uiManagerI == nullptr) {
-            break;
-        }
-        break;
-    }
-
     case WM_COMMAND: {
         
         if (HIWORD(wParam) == BN_CLICKED) {
@@ -72,39 +58,37 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
             UIButton* element = (UIButton*)GetWindowLongPtr(buttonHwnd, GWLP_USERDATA);
 
             if (element) {
-                std::wcout << L"Element trouvé:" << std::endl;
-                std::wcout << L"  ID: " << element->GetID() << std::endl;
-                std::wcout << L"  Type: " << element->GetTypeAsString() << std::endl;
-                std::wcout << L"  Position: (" << element->GetX() << L", " << element->GetY() << L")" << std::endl;
-                std::wcout << L"  Taille: (" << element->GetWidth() << L", " << element->GetHeight() << L")" << std::endl;
+
                 InvalidateRect(hwnd, NULL, TRUE); 
                 element->PerformClick();
 
             }
-            else {
-                std::wcout << L"Aucun élément trouvé pour le hwnd: " << buttonHwnd << std::endl;
-            }
         }
     }
 
-    //case WM_COMMAND: {
-    //    int commandId = LOWORD(wParam);
+    case WM_TIMER: {
+        ClientApp* clientApp = (ClientApp*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+        if (!clientApp) {
+            break;
+        }
 
-    //    break;
-    //}
+        int timerId = static_cast<int>(wParam);
 
-    case WM_SETFOCUS: {
+        clientApp->GetUIManager()->HandleTimerDispawn(timerId);
+
         break;
     }
 
-    case WM_SETREDRAW: {
-    }
-
-      
     // Stylize All Element Correspond to our style param send
     case WM_PAINT: {
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hwnd, &ps);
+
+        RECT clientRect;
+        GetClientRect(hwnd, &clientRect); 
+        HBRUSH hBrush = CreateSolidBrush(RGB(0, 0, 0)); 
+        FillRect(hdc, &clientRect, hBrush); 
+        DeleteObject(hBrush); 
 
         ClientApp* clientApp = (ClientApp*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
         if (!clientApp) {

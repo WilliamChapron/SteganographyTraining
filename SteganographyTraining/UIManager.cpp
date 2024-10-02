@@ -1,5 +1,6 @@
 #include "UIManager.h"
 #include "UIElement.h"
+#include "Utils.h"
 
 #include <iostream>
 #include <string>
@@ -91,25 +92,77 @@ HWND UIManager::GetHWND(int id) const {
     return NULL; 
 }
 
-#include <windows.h>
+void UIManager::CreateButtonWithTimer(HWND parentHwnd, int x, int y, int width, int height, const std::wstring& text, int durationMs) {
+    if (m_elementCount >= MAX_ELEMENTS) {
+        MessageBox(parentHwnd, L"Nombre maximal d'éléments atteint", L"Erreur", MB_OK);
+        return;
+    }
 
-void UIManager::HandleClickAtPosition(int x, int y) {
-    bool elementFound = false;
+    int buttonId = 50 + m_timersCount;
 
-    for (int i = 0; i < m_elementCount; ++i) {
-        UIElement* element = m_pElements[i];
+    HWND buttonHwnd = CreateWindow(
+        L"STATIC",  
+        text.c_str(), 
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  
+        x, y, width, height,  
+        parentHwnd,  
+        (HMENU)buttonId,  
+        (HINSTANCE)GetWindowLongPtr(parentHwnd, GWLP_HINSTANCE),
+        NULL);
 
-        if (x >= element->GetX() && x <= element->GetX() + element->GetWidth() &&
-            y >= element->GetY() && y <= element->GetY() + element->GetHeight()) {
-            elementFound = true;
+    ShowWindow(buttonHwnd, SW_SHOW);
+    SetTimer(parentHwnd, buttonId, durationMs, NULL); 
 
-            MessageBox(NULL, L"Clic détecté sur l'élément UI.", L"Succès", MB_OK | MB_ICONINFORMATION);
-            std::wcout << L"Clic détecté sur l'élément UI." << std::endl;
-            return; 
+    m_activeTimers[buttonId] = buttonHwnd;
+
+    m_timersCount++;
+}
+
+void UIManager::HandleTimerDispawn(UINT timerId) {
+    auto it = m_activeTimers.find(timerId);
+
+    if (it != m_activeTimers.end()) {
+        HWND buttonHwnd = it->second; 
+
+        ShowWindow(buttonHwnd, SW_HIDE);
+        KillTimer(GetParent(buttonHwnd), timerId);
+    }
+}
+
+
+std::wstring UIManager::GetText(HWND parentHwnd, int controlId) {
+    HWND controlHwnd = GetDlgItem(parentHwnd, controlId); // Get element handle
+
+   
+    if (controlHwnd) {
+        int length = GetWindowTextLength(controlHwnd);
+        if (length > 0) {
+
+            // Buffer
+            std::wstring text(length + 1, L'\0'); 
+            GetWindowText(controlHwnd, &text[0], length + 1); 
+
+            return text;
         }
     }
 
-    if (!elementFound) {
-        MessageBox(NULL, L"Aucun élément UI détecté à cette position.", L"Erreur", MB_OK | MB_ICONERROR);
+    return L"";
+}
+
+
+
+void UIManager::SetText(HWND parentHwnd, int elementId, const std::wstring& text) {
+    HWND hwndElement = GetDlgItem(parentHwnd, elementId);
+    if (hwndElement) {
+        SetWindowText(hwndElement, text.c_str());
+
+        
+        for (int i = 0; i < m_elementCount; i++) {
+            if (m_pElements[i] && m_pElements[i]->GetHWND() == hwndElement) {
+                std::string str = WStringToString(text);
+                m_pElements[i]->SetText(str); 
+                break;
+            }
+        }
     }
 }

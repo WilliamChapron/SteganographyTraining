@@ -40,6 +40,8 @@ UIButton::UIButton(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, i
         NULL
     );
 
+
+
     SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);  // Stocke l'instance de la classe
 }
 
@@ -91,7 +93,7 @@ UIRadioButton::UIRadioButton(HINSTANCE hInstance, int id, HWND parentHwnd, int x
     SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);  // Stocke l'instance de la classe
 }
 
-UILabel::UILabel(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text)
+UILabel::UILabel(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL, )
     : UIElement(hInstance, id, UIElementType::Label, parentHwnd, x, y, width, height, color, text)
 {
     m_hwnd = CreateWindow(
