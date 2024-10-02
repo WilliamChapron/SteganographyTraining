@@ -32,31 +32,38 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     int panelHeight = windowHeight;
 
     // Couleurs et textes
-    COLORREF panelColor = RGB(200, 240, 240);
-    COLORREF panel2Color = RGB(200, 140, 140);
-    COLORREF buttonColor = RGB(0, 120, 215);
+    COLORREF leftPanelColor = RGB(173, 216, 230); // Light Blue
+    COLORREF topRightPanelColor = RGB(240, 248, 255); // Alice Blue
+    COLORREF bottomRightPanelColor = RGB(255, 239, 204); // Peach Puff
+    COLORREF buttonColor = RGB(70, 130, 180); // Steel Blue
+    COLORREF textFieldColor = RGB(255, 255, 255); // White
+    COLORREF labelColor = RGB(25, 25, 112); // Midnight Blue
+    COLORREF labelHighlightColor = RGB(255, 140, 0); // Dark Orange
 
-    UIPanel* leftPanel = uiManager->CreatePanel(hwndWindow, 1, 0, 0, halfWidth, panelHeight, panelColor, "");
-    UILabel* leftLabel = uiManager->CreateLabel(hwndWindow, 2, 20, 50, 200, 30, RGB(0, 0, 0), "Nom:");
+    // Left
+    UIPanel* leftPanel = uiManager->CreatePanel(hwndWindow, 1, 50, 20, halfWidth - 100, panelHeight - 100, leftPanelColor, "");
+    UILabel* leftLabel = uiManager->CreateLabel(hwndWindow, 2, windowWidth / 6, windowHeight - 50, 200, 30, labelHighlightColor, "Decode Message");
 
-    // Champ de texte pour le premier panel
-    UITextField* leftTextField = uiManager->CreateTextField(hwndWindow, 3, 20, 90, 200, 30, RGB(255, 255, 255), "");
+    // Top right
+    UIPanel* topRightPanel = uiManager->CreatePanel(hwndWindow, 3, halfWidth + 20, 20, halfWidth, panelHeight / 2 - 50, topRightPanelColor, "");
+    UILabel* topRightTitle = uiManager->CreateLabel(hwndWindow, 4, halfWidth + 300, 50, 200, 30, labelColor, "DECODE IMAGE");
+    UILabel* topRightInputFieldLabel = uiManager->CreateLabel(hwndWindow, 5, halfWidth + 300, 120, 200, 30, labelHighlightColor, "File path : ");
+    UITextField* topRightInputField = uiManager->CreateTextField(hwndWindow, 6, halfWidth + 250, 150, 300, 30, textFieldColor, "");
+    UIButton* buttonLoadFile = uiManager->CreateButton(hwndWindow, 7, halfWidth + 300, 200, 200, 60, buttonColor, "Load the file");
 
-    // Bouton d'envoi pour le premier panel
-    UIButton* leftButton = uiManager->CreateButton(hwndWindow, 4, 20, 130, 100, 30, buttonColor, "Envoyer");
-    leftButton->SetOnClickCallback([]() { MessageBox(NULL, L"Le bouton a été cliqué !", L"Notification", MB_OK);});
+    buttonLoadFile->SetOnClickCallback([]() {
+        std::wcout << "Le bouton a été cliqué !" << std::endl;
+        });
 
-    // Création du deuxième panel (droite)
-    UIPanel* rightPanel = uiManager->CreatePanel(hwndWindow, 5, halfWidth, 0, halfWidth, panelHeight, panel2Color, "");
-
-    // Label pour le deuxième panel
-    UILabel* rightLabel = uiManager->CreateLabel(hwndWindow, 6, halfWidth + 20, 50, 200, 30, RGB(0, 0, 0), "Prénom:");
-
-    // Champ de texte pour le deuxième panel
-    UITextField* rightTextField = uiManager->CreateTextField(hwndWindow, 7, halfWidth + 20, 90, 200, 30, RGB(255, 255, 255), "");
-
-    // Bouton d'envoi pour le deuxième panel
-    UIButton* rightButton = uiManager->CreateButton(hwndWindow, 8, halfWidth + 20, 130, 100, 30, buttonColor, "Envoyer");
+    // Bottom right
+    UIPanel* Panel = uiManager->CreatePanel(hwndWindow, 8, halfWidth + 20, 20 + panelHeight / 2 - 50, halfWidth, panelHeight / 2 - 50, bottomRightPanelColor, "");
+    UILabel* Title = uiManager->CreateLabel(hwndWindow, 9, halfWidth + 300, panelHeight / 2, 200, 30, labelColor, "ENCODE IMAGE");
+    UILabel* InputFieldLabel = uiManager->CreateLabel(hwndWindow, 10, halfWidth + 180, 70 + panelHeight / 2, 200, 30, labelHighlightColor, "Text To Encode");
+    UITextField* InputField = uiManager->CreateTextField(hwndWindow, 11, halfWidth + 180, 100 + panelHeight / 2, 200, 30, textFieldColor, "");
+    UILabel* inputFieldLabelOutputFile = uiManager->CreateLabel(hwndWindow, 12, halfWidth + 400, 70 + panelHeight / 2, 200, 30, labelHighlightColor, "Output file : ");
+    UITextField* inputFieldOutputFile = uiManager->CreateTextField(hwndWindow, 13, halfWidth + 400, 100 + panelHeight / 2, 200, 30, textFieldColor, "");
+    UIButton* bottomRightButtonEncodeFile = uiManager->CreateButton(hwndWindow, 7, halfWidth + 180, panelHeight / 2 + 160, 300, 60, buttonColor, "1. Encode file");
+    UIButton* bottomRightButtonSaveFile = uiManager->CreateButton(hwndWindow, 7, halfWidth + 400, panelHeight / 2 + 160, 200, 60, buttonColor, "2. Save file");
 
     // Set Control WM_COMMAND active
     clientApp->isControlEventStarted = true;
@@ -65,6 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     return 0;
 }
+
 
 
 //BitmapImage image;

@@ -52,7 +52,6 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
     }
 
     case WM_TIMER: {
-        //InvalidateRect(hwnd, NULL, TRUE);
         ClientApp* clientApp = (ClientApp*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
         if (!clientApp) {
             break;
@@ -65,47 +64,11 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
         break;
     }
 
-    // #TODO Faire un tableau de use state qui lie un boutton a une action, chaque button peut etre liée a une action et quand il est retrouvé, pour chaque evenement clique, remplissage ou autre on fait des choses 
-
     case WM_COMMAND: {
-        //int commandId = LOWORD(wParam);
-
-        //ClientApp* clientApp = (ClientApp*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-        //if (!clientApp) {
-        //    break;
-        //}
-        //if (!clientApp->isControlEventStarted) {
-        //    break;
-        //}
-        //UIManager* uiManager = clientApp->GetUIManager();
-        //if (!uiManager) {
-        //    break;
-        //}
-
-        //UIElement** elements = uiManager->GetAllElements();
-        //int elementCount = uiManager->GetElementsCount();
-
-        //for (int i = 0; i < elementCount; ++i) {
-        //    if (elements[i] != nullptr && elements[i]->GetID() == commandId) {
-        //        std::wcout << L"Element trouvé: ID=" << elements[i]->GetID()
-        //            << L", Type=" << elements[i]->GetTypeAsString()
-        //            << L", Position=(" << elements[i]->GetX() << L"," << elements[i]->GetY() << L")"
-        //            << L", Dimensions=" << elements[i]->GetWidth() << L"x" << elements[i]->GetHeight() << std::endl;
-
-
-        //        elements[i]->PerformClick();
-        //        /*SendMessage(hwnd, WM_SETREDRAW, i, 0);*/
-        //        //InvalidateRect(hwnd, NULL, TRUE);
-        //        
-        //        break;
-        //    }
-        //}
-        //break;
         
         if (HIWORD(wParam) == BN_CLICKED) {
             HWND buttonHwnd = (HWND)lParam;  
 
-            // Récupérer l'instance UIButton associée à cet hwnd
             UIButton* element = (UIButton*)GetWindowLongPtr(buttonHwnd, GWLP_USERDATA);
 
             if (element) {
@@ -114,7 +77,8 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
                 std::wcout << L"  Type: " << element->GetTypeAsString() << std::endl;
                 std::wcout << L"  Position: (" << element->GetX() << L", " << element->GetY() << L")" << std::endl;
                 std::wcout << L"  Taille: (" << element->GetWidth() << L", " << element->GetHeight() << L")" << std::endl;
-                InvalidateRect(hwnd, NULL, TRUE); // Invalider tout le rectangle du bouton
+                InvalidateRect(hwnd, NULL, TRUE); 
+                element->PerformClick();
 
             }
             else {
@@ -134,53 +98,11 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
     }
 
     case WM_SETREDRAW: {
-        //int index = static_cast<int>(wParam); 
-        //std::wcout << L"Redraw Element" << std::to_wstring(index) << std::endl;
-
-        //ClientApp* clientApp = (ClientApp*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-        //if (!clientApp) {
-        //    break;
-        //}
-        //UIManager* uiManager = clientApp->GetUIManager();
-        //if (!uiManager) {
-        //    break;
-        //}
-
-        //// Obtenir le tableau des éléments
-        //UIElement** elements = uiManager->GetAllElements();
-        //int elementCount = uiManager->GetElementsCount();
-
-        //// Vérifier que l'index est valide
-        //if (index >= 0 && index < elementCount) {
-        //    UIElement* element = elements[index];
-        //    HWND elementHwnd = element->GetHWND();
-
-        //    // Invalider le rectangle de l'élément
-        //    InvalidateRect(elementHwnd, NULL, TRUE);
-
-        //    // Gérer le dessin de l'élément
-        //    PAINTSTRUCT ps;
-        //    HDC hdcElement = BeginPaint(elementHwnd, &ps);
-
-        //    // Appel de la méthode PerformPaint pour dessiner l'élément
-        //    element->PerformPaint(hdcElement);
-
-        //    EndPaint(elementHwnd, &ps);
-        //}
-        //else {
-        //    std::wcout << L"Index out of range" << std::endl;
-        //}
-        //break;
     }
 
       
     // Stylize All Element Correspond to our style param send
     case WM_PAINT: {
-        //if (onePaint) {
-        //    break;
-        //}
-        onePaint = true;
-        std::wcout << L"Paint" << std::endl;
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hwnd, &ps);
 
