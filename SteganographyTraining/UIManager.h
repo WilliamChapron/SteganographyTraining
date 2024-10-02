@@ -22,10 +22,10 @@ public:
     ~UIManager();
 
     UIButton* CreateButton(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text);
-    UITextField* CreateTextField(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text);
+    UITextField* CreateTextField(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text, DWORD style = WS_TABSTOP | WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL, bool isTextFieldText = false);
     UICheckBox* CreateCheckBox(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text);
     UIRadioButton* CreateRadioButton(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text);
-    UILabel* CreateLabel(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text);
+    UILabel* CreateLabel(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text, DWORD style = WS_VISIBLE | WS_CHILD);
     UIPanel* CreatePanel(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text);
 
 

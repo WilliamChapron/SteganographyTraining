@@ -61,7 +61,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     // Left
     UIPanel* leftPanel = uiManager->CreatePanel(hwndWindow, 1, 50, 90, halfWidth - 100, panelHeight - 200, leftPanelColor, "");
-    UILabel* leftLabel = uiManager->CreateLabel(hwndWindow, 2, windowWidth / 6, windowHeight - 70, 200, 60, buttonColor, "Decode Message : Soon");
+    UITextField* leftLabel = uiManager->CreateTextField(hwndWindow, 2, windowWidth / 6 - 100, windowHeight - 100, 300, 60, RGB(255,255,255), "Decode Message : No message ", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | WS_VSCROLL | ES_AUTOVSCROLL, true);
 
     // Top right
     UIPanel* topRightPanel = uiManager->CreatePanel(hwndWindow, 3, halfWidth + 20, 50, halfWidth, panelHeight / 2 - 100, topRightPanelColor, "");

@@ -83,18 +83,29 @@ public:
 
 class UITextField : public UIElement {
 public:
-    UITextField(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text);
+    UITextField(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text, DWORD style, bool isTextFieldText);
 
     void PerformPaint(HDC hdc) override {
         HBRUSH hBrush = CreateSolidBrush(m_color);
         RECT rect = { 0, 0, m_width, m_height };
 
-        FillRect(hdc, &rect, hBrush);
+        //FillRect(hdc, &rect, hBrush);
         DeleteObject(hBrush);
 
         SetTextColor(hdc, RGB(255, 255, 255));
+
+
         SetBkMode(hdc, TRANSPARENT);
+
+        if (m_isTextFieldText) {
+            SetFocus(m_hwnd);
+            SendMessage(m_hwnd, EM_SETSEL, 0, -1);
+        }
+
+
     }
+
+    bool m_isTextFieldText;
 };
 
 class UICheckBox : public UIElement {
@@ -109,7 +120,7 @@ public:
 
 class UILabel : public UIElement {
 public:
-    UILabel(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text);
+    UILabel(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text, DWORD style);
 };
 
 

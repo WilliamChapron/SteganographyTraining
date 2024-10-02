@@ -51,19 +51,40 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
         break;
     }
     case WM_COMMAND: {
-        
+
         if (HIWORD(wParam) == BN_CLICKED) {
-            HWND buttonHwnd = (HWND)lParam;  
+            int id = LOWORD(wParam);
+            if (id == 2) {
+                MessageBox(hwnd, L"Le texte a été modifié!", L"Information", MB_OK);
+            }
+
+            HWND buttonHwnd = (HWND)lParam;
 
             UIButton* element = (UIButton*)GetWindowLongPtr(buttonHwnd, GWLP_USERDATA);
 
             if (element) {
 
-                InvalidateRect(hwnd, NULL, TRUE); 
+                InvalidateRect(hwnd, NULL, TRUE);
                 element->PerformClick();
 
             }
         }
+        if (HIWORD(wParam) == EN_CHANGE) {
+            /*int id = LOWORD(wParam);
+            if (id == 2) {
+                MessageBox(hwnd, L"Le texte a été modifié!", L"Information", MB_OK);
+            }*/
+        }
+        break;
+    }
+
+    case WM_LBUTTONDOWN: { // Message pour le clic gauche
+        // Vérifiez si le clic se produit dans le contrôle EDIT
+        HWND hwndEdit = GetDlgItem(hwnd, 2); // Remplacez 2 par l'ID de votre contrôle EDIT
+        if (hwndEdit && (HWND)lParam == hwndEdit) {
+            MessageBox(hwnd, L"Clic sur le champ de texte!", L"Information", MB_OK);
+        }
+        break;
     }
 
     case WM_TIMER: {

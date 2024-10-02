@@ -47,20 +47,26 @@ UIButton::UIButton(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, i
 
 
 
-UITextField::UITextField(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text)
+UITextField::UITextField(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text, DWORD style, bool isTextFieldText)
     : UIElement(hInstance, id, UIElementType::TextField, parentHwnd, x, y, width, height, color, text)
 {
+
+    m_isTextFieldText = isTextFieldText;
+
+    std::wstring wText(text.begin(), text.end());
+
     m_hwnd = CreateWindowEx(
         WS_EX_CLIENTEDGE,
         L"EDIT",
-        L"",
-        WS_TABSTOP | WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL,
+        wText.c_str(),
+        style,
         x, y, width, height,
         parentHwnd,
         (HMENU)m_id,
         m_hInstance,
         NULL
     );
+    SetWindowText(m_hwnd, wText.c_str());
 
     SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);  // Stocke l'instance de la classe
 }
@@ -93,13 +99,13 @@ UIRadioButton::UIRadioButton(HINSTANCE hInstance, int id, HWND parentHwnd, int x
     SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);  // Stocke l'instance de la classe
 }
 
-UILabel::UILabel(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL, )
+UILabel::UILabel(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text, DWORD style)
     : UIElement(hInstance, id, UIElementType::Label, parentHwnd, x, y, width, height, color, text)
 {
     m_hwnd = CreateWindow(
         L"STATIC",
         std::wstring(text.begin(), text.end()).c_str(),
-        WS_VISIBLE | WS_CHILD,
+        style,
         x, y, width, height,
         parentHwnd, (HMENU)id, hInstance, NULL
     );

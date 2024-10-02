@@ -26,8 +26,8 @@ UIButton* UIManager::CreateButton(HWND parentHwnd, int id, int x, int y, int wid
 }
 
 
-UITextField* UIManager::CreateTextField(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text) {
-    UITextField* textField = new UITextField(m_hInstance, id, parentHwnd, x, y, width, height, color, text);
+UITextField* UIManager::CreateTextField(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text, DWORD style, bool isTextFieldText) {
+    UITextField* textField = new UITextField(m_hInstance, id, parentHwnd, x, y, width, height, color, text, style, isTextFieldText);
 
     if (m_elementCount < MAX_ELEMENTS) {
         m_pElements[m_elementCount] = textField;
@@ -61,8 +61,8 @@ UIRadioButton* UIManager::CreateRadioButton(HWND parentHwnd, int id, int x, int 
     return radioButton;
 }
 
-UILabel* UIManager::CreateLabel(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text) {
-    UILabel* label = new UILabel(m_hInstance, id, parentHwnd, x, y, width, height, color, text);
+UILabel* UIManager::CreateLabel(HWND parentHwnd, int id, int x, int y, int width, int height, COLORREF color, const std::string& text, DWORD style) {
+    UILabel* label = new UILabel(m_hInstance, id, parentHwnd, x, y, width, height, color, text, style);
 
     if (m_elementCount < MAX_ELEMENTS) {
         m_pElements[m_elementCount] = label;
