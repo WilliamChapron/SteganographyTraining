@@ -4,6 +4,7 @@
 
 class Window;
 class UIManager;
+class BitmapImage;
 
 class ClientApp {
 public:
@@ -23,6 +24,8 @@ public:
 private:
     Window* m_pWindow;
     UIManager* m_pUIManager;
+    BitmapImage* bitmapImgLoader;
+
     std::wstring m_string = L"Hello";
 
 

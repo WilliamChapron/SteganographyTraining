@@ -53,10 +53,6 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
     case WM_COMMAND: {
 
         if (HIWORD(wParam) == BN_CLICKED) {
-            int id = LOWORD(wParam);
-            if (id == 2) {
-                MessageBox(hwnd, L"Le texte a été modifié!", L"Information", MB_OK);
-            }
 
             HWND buttonHwnd = (HWND)lParam;
 
@@ -70,11 +66,14 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
             }
         }
         if (HIWORD(wParam) == EN_CHANGE) {
-            /*int id = LOWORD(wParam);
-            if (id == 2) {
-                MessageBox(hwnd, L"Le texte a été modifié!", L"Information", MB_OK);
-            }*/
         }
+        if (HIWORD(wParam) == EN_SETFOCUS) {
+            int id = LOWORD(wParam);
+            if (id == 2) {
+                /*MessageBox(hwnd, L"Le texte a été modifié!", L"Information", MB_OK);*/
+            }
+        }
+        
         break;
     }
 

@@ -95,7 +95,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             }
 
             // Call Load img Func
-
             
             clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 330, 250, 200, 30, L"Image Uploaded Successfully");
 
@@ -104,11 +103,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         });
 
         // Encode img Btn
+        bottomRightButtonEncodeFile->SetOnClickCallback([clientApp, hwndWindow, halfWidth, panelHeight]() {
+            std::wstring inputText = clientApp->GetUIManager()->GetText(hwndWindow, 14);
+            if (!inputText.empty()) {
+                inputText = ConvertSlashesToDoubleBackslashes(inputText);
+                //MessageBox(hwndWindow, inputText.c_str(), L"Input Text", MB_OK);
+            }
+            clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 180, 240 + panelHeight / 2 - 20, 200, 30, L"Image Encoded Successfully");
+            });
 
 
 
 
         // Save File btn
+        bottomRightButtonSaveFile->SetOnClickCallback([clientApp, hwndWindow, halfWidth, panelHeight]() {
+            std::wstring inputText = clientApp->GetUIManager()->GetText(hwndWindow, 14);
+            if (!inputText.empty()) {
+                inputText = ConvertSlashesToDoubleBackslashes(inputText);
+                //MessageBox(hwndWindow, inputText.c_str(), L"Input Text", MB_OK);
+            }
+            clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 400, 240 + panelHeight / 2 - 20, 200, 30, L"Image Saved Successfully");
+            });
 
 
         
