@@ -19,12 +19,13 @@ public:
 
     bool isControlEventStarted = false;
 
-
+    BitmapImage* m_bitmapImgLoader = nullptr;
 
 private:
     Window* m_pWindow;
     UIManager* m_pUIManager;
-    BitmapImage* bitmapImgLoader;
+
+
 
     std::wstring m_string = L"Hello";
 

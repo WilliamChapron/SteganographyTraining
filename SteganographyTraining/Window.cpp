@@ -6,6 +6,7 @@
 #include "ClientApp.h"
 #include "UIManager.h"
 #include "UIElement.h"
+#include "BitmapImage.h"
 
 
 
@@ -100,45 +101,199 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
     }
 
     // Stylize All Element Correspond to our style param send
+ //   case WM_PAINT: {
+ //       PAINTSTRUCT ps;
+ //       HDC hdc = BeginPaint(hwnd, &ps);
+
+ //       // Fill Window
+ //       RECT clientRect;
+ //       GetClientRect(hwnd, &clientRect); 
+ //       HBRUSH hBrush = CreateSolidBrush(RGB(0, 0, 0)); 
+ //       FillRect(hdc, &clientRect, hBrush); 
+ //       DeleteObject(hBrush); 
+
+
+ //       // Check & Init part
+ //       ClientApp* clientApp = (ClientApp*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+ //       if (!clientApp) {
+ //           EndPaint(hwnd, &ps);
+ //           break;
+ //       }
+ //       if (!clientApp->isControlEventStarted) {
+ //           EndPaint(hwnd, &ps);
+ //           break;
+ //       }
+ //       UIManager* uiManager = clientApp->GetUIManager();
+ //       if (!uiManager) {
+ //           EndPaint(hwnd, &ps);
+ //           break;
+ //       }
+
+ //       UIElement** elements = uiManager->GetAllElements();
+ //       int elementCount = uiManager->GetElementsCount();
+
+ //       // Draw Controls
+ //       for (int i = 0; i < elementCount; ++i) {
+ //           UIElement* element = elements[i];
+ //           HWND elementHwnd = element->GetHWND();
+
+ //           PAINTSTRUCT psElement;
+ //           HDC hdcElement = BeginPaint(elementHwnd, &psElement);
+
+ //           element->PerformPaint(hdcElement);
+
+ //           EndPaint(elementHwnd, &psElement);
+ //       }
+
+ //       
+
+ //       // Show img
+ //       //clientApp->m_bitmapImgLoader = new BitmapImage();
+ //       //clientApp->m_bitmapImgLoader->Load("C:\\Users\\wchapron\\Documents\\GitHub\\SteganographyTraining\\bmp_test.bmp");
+ //       BitmapImage* img = clientApp->m_bitmapImgLoader;
+
+ //       if (clientApp->m_bitmapImgLoader != nullptr) {
+
+ //           std::wcout << "Bit map show" << std::endl;
+
+ //           HBITMAP hBitmap = nullptr;
+ //           HDC imgDeviceContext = nullptr;
+ //           HDC mainDeviceContext = hdc;
+
+ //           hBitmap = CreateDIBitmap(
+ //               mainDeviceContext,
+ //               &img->m_infoHeader,
+ //               CBM_INIT,
+ //               &img->m_pPixelData,
+ //               (BITMAPINFO*)(&img->m_infoHeader),
+ //               DIB_RGB_COLORS
+ //           );
+
+ //           if (!hBitmap) {
+ //               MessageBox(NULL, L"Erreur lors de la création du bitmap", L"Erreur", MB_OK);
+ //               return 0;
+ //           }
+
+ //           imgDeviceContext = CreateCompatibleDC(mainDeviceContext);
+ //           if (!imgDeviceContext) {
+ //               MessageBox(NULL, L"Erreur lors de la création du Device Context", L"Erreur", MB_OK);
+ //               DeleteObject(hBitmap);
+ //               return 0;
+ //           }
+
+ //           HBITMAP oldBitmap = (HBITMAP)SelectObject(imgDeviceContext, hBitmap);
+
+ ///*           BOOL result = StretchBlt(
+ //               mainDeviceContext,
+ //               0,
+ //               0,
+ //               200,
+ //               100,
+ //               imgDeviceContext,
+ //               0,
+ //               0,
+ //               img->m_infoHeader.biWidth,
+ //               img->m_infoHeader.biHeight,
+ //               SRCCOPY
+ //           );*/
+
+ //           BitBlt(
+ //               mainDeviceContext, 
+ //               0,                 
+ //               0,                 
+ //               img->m_infoHeader.biWidth, 
+ //               img->m_infoHeader.biHeight,
+ //               imgDeviceContext,   
+ //               0,                  
+ //               0,                  
+ //               SRCCOPY
+ //           );
+
+ //           SelectObject(imgDeviceContext, oldBitmap);
+ //           DeleteDC(imgDeviceContext);
+ //       }
+
+
+ //       EndPaint(hwnd, &ps);
+ //       break;
+ //   }
+
     case WM_PAINT: {
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hwnd, &ps);
-
-        RECT clientRect;
-        GetClientRect(hwnd, &clientRect); 
-        HBRUSH hBrush = CreateSolidBrush(RGB(0, 0, 0)); 
-        FillRect(hdc, &clientRect, hBrush); 
-        DeleteObject(hBrush); 
-
+        // Check & Init part
         ClientApp* clientApp = (ClientApp*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
         if (!clientApp) {
             EndPaint(hwnd, &ps);
             break;
         }
-        if (!clientApp->isControlEventStarted) {
-            EndPaint(hwnd, &ps);
-            break;
+        // Show img
+        clientApp->m_bitmapImgLoader = new BitmapImage();
+        clientApp->m_bitmapImgLoader->Load("C:\\Users\\wchapron\\Documents\\GitHub\\SteganographyTraining\\mario.bmp");
+        BitmapImage* img = clientApp->m_bitmapImgLoader;
+
+        if (clientApp->m_bitmapImgLoader != nullptr) {
+
+            std::wcout << "Bit map show" << std::endl;
+
+            HBITMAP hBitmap = nullptr;
+            HDC imgDeviceContext = nullptr;
+            HDC mainDeviceContext = hdc;
+
+            hBitmap = CreateDIBitmap(
+                mainDeviceContext,
+                &img->m_infoHeader,
+                CBM_INIT,
+                &img->m_pPixelData,
+                (BITMAPINFO*)(&img->m_infoHeader),
+                DIB_RGB_COLORS
+            );
+
+            if (!hBitmap) {
+                MessageBox(NULL, L"Erreur lors de la création du bitmap", L"Erreur", MB_OK);
+                return 0;
+            }
+            imgDeviceContext = CreateCompatibleDC(mainDeviceContext);
+            if (!imgDeviceContext) {
+                MessageBox(NULL, L"Erreur lors de la création du Device Context", L"Erreur", MB_OK);
+                DeleteObject(hBitmap);
+                return 0;
+            }
+
+            HBITMAP oldBitmap = (HBITMAP)SelectObject(imgDeviceContext, hBitmap);
+
+            BitBlt(
+                mainDeviceContext,
+                0,
+                0,
+                img->m_infoHeader.biWidth,
+                img->m_infoHeader.biHeight,
+                imgDeviceContext,
+                0,
+                0,
+                SRCCOPY
+            );
+
+            //BOOL result = StretchBlt
+            //(
+            //    mainDeviceContext,
+            //    0,
+            //    0,
+            //    200,
+            //    100,
+            //    imgDeviceContext,
+            //    0,
+            //    0,
+            //    img->m_infoHeader.biWidth,
+            //    img->m_infoHeader.biHeight,
+            //    SRCCOPY
+            //);
+
+            SelectObject(imgDeviceContext, oldBitmap);
+            DeleteDC(imgDeviceContext);
         }
-        UIManager* uiManager = clientApp->GetUIManager();
-        if (!uiManager) {
-            EndPaint(hwnd, &ps);
-            break;
-        }
 
-        UIElement** elements = uiManager->GetAllElements();
-        int elementCount = uiManager->GetElementsCount();
 
-        for (int i = 0; i < elementCount; ++i) {
-            UIElement* element = elements[i];
-            HWND elementHwnd = element->GetHWND();
-
-            PAINTSTRUCT psElement;
-            HDC hdcElement = BeginPaint(elementHwnd, &psElement);
-
-            element->PerformPaint(hdcElement);
-
-            EndPaint(elementHwnd, &psElement);
-        }
         EndPaint(hwnd, &ps);
         break;
     }

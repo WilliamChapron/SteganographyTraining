@@ -30,12 +30,18 @@ public:
     inline int GetHeight() const { return m_infoHeader.biHeight;}
     inline int GetRowPadded() const { return m_rowPadded;}
 
-private:
     BITMAPFILEHEADER m_fileHeader;
     BITMAPINFOHEADER m_infoHeader;
     uint8_t* m_pPixelData;
 
+
+    // W
+    std::string m_currentImgPath;
+
     int m_width;
     int m_height;
     int m_rowPadded;
+
+private:
+
 };
