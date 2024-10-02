@@ -67,44 +67,67 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 
     // #TODO Faire un tableau de use state qui lie un boutton a une action, chaque button peut etre liée a une action et quand il est retrouvé, pour chaque evenement clique, remplissage ou autre on fait des choses 
 
-    //case WM_COMMAND: {
-    //    /*int commandId = LOWORD(wParam);
-
-    //    ClientApp* clientApp = (ClientApp*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-    //    if (!clientApp) {
-    //        break;
-    //    }
-    //    if (!clientApp->isControlEventStarted) {
-    //        break;
-    //    }
-    //    UIManager* uiManager = clientApp->GetUIManager();
-    //    if (!uiManager) {
-    //        break;
-    //    }
-
-    //    UIElement** elements = uiManager->GetAllElements();
-    //    int elementCount = uiManager->GetElementsCount();
-
-    //    for (int i = 0; i < elementCount; ++i) {
-    //        if (elements[i] != nullptr && elements[i]->GetID() == commandId) {
-    //            std::wcout << L"Element trouvé: ID=" << elements[i]->GetID()
-    //                << L", Type=" << elements[i]->GetTypeAsString()
-    //                << L", Position=(" << elements[i]->GetX() << L"," << elements[i]->GetY() << L")"
-    //                << L", Dimensions=" << elements[i]->GetWidth() << L"x" << elements[i]->GetHeight() << std::endl;
-
-    //            SendMessage(hwnd, WM_SETREDRAW, i, 0);
-    //            
-    //            break;
-    //        }
-    //    }
-    //    break;*/
-    //}
-
     case WM_COMMAND: {
-        int commandId = LOWORD(wParam);
+        //int commandId = LOWORD(wParam);
 
-        break;
+        //ClientApp* clientApp = (ClientApp*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+        //if (!clientApp) {
+        //    break;
+        //}
+        //if (!clientApp->isControlEventStarted) {
+        //    break;
+        //}
+        //UIManager* uiManager = clientApp->GetUIManager();
+        //if (!uiManager) {
+        //    break;
+        //}
+
+        //UIElement** elements = uiManager->GetAllElements();
+        //int elementCount = uiManager->GetElementsCount();
+
+        //for (int i = 0; i < elementCount; ++i) {
+        //    if (elements[i] != nullptr && elements[i]->GetID() == commandId) {
+        //        std::wcout << L"Element trouvé: ID=" << elements[i]->GetID()
+        //            << L", Type=" << elements[i]->GetTypeAsString()
+        //            << L", Position=(" << elements[i]->GetX() << L"," << elements[i]->GetY() << L")"
+        //            << L", Dimensions=" << elements[i]->GetWidth() << L"x" << elements[i]->GetHeight() << std::endl;
+
+
+        //        elements[i]->PerformClick();
+        //        /*SendMessage(hwnd, WM_SETREDRAW, i, 0);*/
+        //        //InvalidateRect(hwnd, NULL, TRUE);
+        //        
+        //        break;
+        //    }
+        //}
+        //break;
+        
+        if (HIWORD(wParam) == BN_CLICKED) {
+            HWND buttonHwnd = (HWND)lParam;  
+
+            // Récupérer l'instance UIButton associée à cet hwnd
+            UIButton* element = (UIButton*)GetWindowLongPtr(buttonHwnd, GWLP_USERDATA);
+
+            if (element) {
+                std::wcout << L"Element trouvé:" << std::endl;
+                std::wcout << L"  ID: " << element->GetID() << std::endl;
+                std::wcout << L"  Type: " << element->GetTypeAsString() << std::endl;
+                std::wcout << L"  Position: (" << element->GetX() << L", " << element->GetY() << L")" << std::endl;
+                std::wcout << L"  Taille: (" << element->GetWidth() << L", " << element->GetHeight() << L")" << std::endl;
+                InvalidateRect(hwnd, NULL, TRUE); // Invalider tout le rectangle du bouton
+
+            }
+            else {
+                std::wcout << L"Aucun élément trouvé pour le hwnd: " << buttonHwnd << std::endl;
+            }
+        }
     }
+
+    //case WM_COMMAND: {
+    //    int commandId = LOWORD(wParam);
+
+    //    break;
+    //}
 
     case WM_SETFOCUS: {
         break;

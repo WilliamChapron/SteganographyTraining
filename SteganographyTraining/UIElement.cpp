@@ -1,11 +1,10 @@
 #include "UIElement.h"
 
+
+
 UIElement::UIElement(HINSTANCE hInstance, int id, UIElementType type, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text)
     : m_hInstance(hInstance), m_id(id), m_type(type), m_parentHwnd(parentHwnd), m_x(x), m_y(y), m_width(width), m_height(height), m_hwnd(nullptr), m_color(color), m_text(text)
 {
-}
-
-UIElement::~UIElement() {
 }
 
 std::wstring UIElement::GetTypeAsString() const {
@@ -41,8 +40,10 @@ UIButton::UIButton(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, i
         NULL
     );
 
-    //UpdateWindow(parentHwnd);
+    SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);  // Stocke l'instance de la classe
 }
+
+
 
 UITextField::UITextField(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text)
     : UIElement(hInstance, id, UIElementType::TextField, parentHwnd, x, y, width, height, color, text)
@@ -59,7 +60,7 @@ UITextField::UITextField(HINSTANCE hInstance, int id, HWND parentHwnd, int x, in
         NULL
     );
 
-    //UpdateWindow(parentHwnd);
+    SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);  // Stocke l'instance de la classe
 }
 
 UICheckBox::UICheckBox(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text)
@@ -72,6 +73,8 @@ UICheckBox::UICheckBox(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int 
         x, y, width, height,
         parentHwnd, (HMENU)id, hInstance, NULL
     );
+
+    SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);  // Stocke l'instance de la classe
 }
 
 UIRadioButton::UIRadioButton(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text)
@@ -84,6 +87,8 @@ UIRadioButton::UIRadioButton(HINSTANCE hInstance, int id, HWND parentHwnd, int x
         x, y, width, height,
         parentHwnd, (HMENU)id, hInstance, NULL
     );
+
+    SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);  // Stocke l'instance de la classe
 }
 
 UILabel::UILabel(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text)
@@ -96,6 +101,8 @@ UILabel::UILabel(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int
         x, y, width, height,
         parentHwnd, (HMENU)id, hInstance, NULL
     );
+
+    SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);  // Stocke l'instance de la classe
 }
 
 UIPanel::UIPanel(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int width, int height, COLORREF color, const std::string& text)
@@ -104,7 +111,7 @@ UIPanel::UIPanel(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int
     m_hwnd = CreateWindow(
         L"STATIC",
         NULL,
-        WS_CHILD | WS_VISIBLE | SS_NOTIFY,
+        WS_CHILD | WS_VISIBLE,
         x,
         y,
         width,
@@ -112,6 +119,12 @@ UIPanel::UIPanel(HINSTANCE hInstance, int id, HWND parentHwnd, int x, int y, int
         parentHwnd,
         (HMENU)id,
         hInstance,
-        this
+        NULL
     );
+
+    SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
 }
+
+
+
+//#TODO Panel proc

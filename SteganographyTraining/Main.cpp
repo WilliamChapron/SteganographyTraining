@@ -15,33 +15,57 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     // Init Window / UIManager
     if (!clientApp->Initialize(hInstance)) {
-        return 1; 
+        return 1;
     }
-    
-    HWND hwndWindowI = clientApp->GetWindow()->GetHWND();
-    UIManager* uiManagerI = clientApp->GetUIManager();
 
+    HWND hwndWindow = clientApp->GetWindow()->GetHWND();
+    UIManager* uiManager = clientApp->GetUIManager();
 
-    COLORREF buttonColor = RGB(0, 120, 215);  // Exemple de couleur pour le bouton
-    std::string buttonText = "Cliquez ici";   // Texte pour le bouton
+    // Dimensions de la fenêtre
+    RECT windowRect;
+    GetClientRect(hwndWindow, &windowRect);
+    int windowWidth = windowRect.right;
+    int windowHeight = windowRect.bottom;
 
-    UIButton* button = uiManagerI->CreateButton(hwndWindowI, 1, 200, 200, 100, 30, buttonColor, buttonText);
+    // Diviser la fenêtre en deux moitiés
+    int halfWidth = windowWidth / 2;
+    int panelHeight = windowHeight;
 
-    COLORREF textFieldColor = RGB(155, 255, 255); // Exemple de couleur pour le champ de texte
-    std::string textFieldText = "Entrez du texte"; // Texte pour le champ de texte
+    // Couleurs et textes
+    COLORREF panelColor = RGB(200, 240, 240);
+    COLORREF panel2Color = RGB(200, 140, 140);
+    COLORREF buttonColor = RGB(0, 120, 215);
 
-    UITextField* textField = uiManagerI->CreateTextField(hwndWindowI, 2, 50, 100, 200, 30, textFieldColor, textFieldText);
- 
+    UIPanel* leftPanel = uiManager->CreatePanel(hwndWindow, 1, 0, 0, halfWidth, panelHeight, panelColor, "");
+    UILabel* leftLabel = uiManager->CreateLabel(hwndWindow, 2, 20, 50, 200, 30, RGB(0, 0, 0), "Nom:");
 
+    // Champ de texte pour le premier panel
+    UITextField* leftTextField = uiManager->CreateTextField(hwndWindow, 3, 20, 90, 200, 30, RGB(255, 255, 255), "");
+
+    // Bouton d'envoi pour le premier panel
+    UIButton* leftButton = uiManager->CreateButton(hwndWindow, 4, 20, 130, 100, 30, buttonColor, "Envoyer");
+    leftButton->SetOnClickCallback([]() { MessageBox(NULL, L"Le bouton a été cliqué !", L"Notification", MB_OK);});
+
+    // Création du deuxième panel (droite)
+    UIPanel* rightPanel = uiManager->CreatePanel(hwndWindow, 5, halfWidth, 0, halfWidth, panelHeight, panel2Color, "");
+
+    // Label pour le deuxième panel
+    UILabel* rightLabel = uiManager->CreateLabel(hwndWindow, 6, halfWidth + 20, 50, 200, 30, RGB(0, 0, 0), "Prénom:");
+
+    // Champ de texte pour le deuxième panel
+    UITextField* rightTextField = uiManager->CreateTextField(hwndWindow, 7, halfWidth + 20, 90, 200, 30, RGB(255, 255, 255), "");
+
+    // Bouton d'envoi pour le deuxième panel
+    UIButton* rightButton = uiManager->CreateButton(hwndWindow, 8, halfWidth + 20, 130, 100, 30, buttonColor, "Envoyer");
 
     // Set Control WM_COMMAND active
     clientApp->isControlEventStarted = true;
-
 
     clientApp->GetWindow()->Run();
 
     return 0;
 }
+
 
 //BitmapImage image;
 //if (!image.Load("C:\\Users\\wchapron\\source\\repos\\WilliamChapron\\SteganographyTraining\\bmp_test.bmp")) {
