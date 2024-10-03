@@ -48,6 +48,24 @@ std::wstring ConvertSlashesToDoubleBackslashes(const std::wstring& inputText) {
 }
 
 
+
+
+class TestClass2 {
+public:
+    void Execute() {
+        std::cout << "TestClass2::Execute called" << std::endl;
+    }
+};
+
+class TestClass1 {
+public:
+    void Run() {
+        std::cout << "TestClass1::Run called" << std::endl;
+    }
+    TestClass2* testClass2 = new TestClass2; // Instance de TestClass1
+};
+
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
     ClientApp* clientApp = new ClientApp();
     OPENFILENAME ofn;
@@ -166,9 +184,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     // Set Control WM_COMMAND active
     clientApp->isControlEventStarted = true;
 
+
+    TestClass1 testClass1;
+
     Thread thread;
 
-    thread.Init();
+    HANDLE threadHandle = thread.Init(testClass1.testClass2, &TestClass2::Execute);
+
+    WaitForSingleObject(threadHandle, INFINITE);
+
+    CloseHandle(threadHandle);
 
     clientApp->GetWindow()->Run();
 
