@@ -88,7 +88,6 @@ char Steganography::getChar(uint8_t* data, int place)
 
 void Steganography::encode(BitmapImage* input, const char* sentence)
 {
-	std::cout << sentence;
 	int iterator = 0;
 	uint8_t* buffer = input->m_pixels;
 	while (sentence[iterator] != NULL)

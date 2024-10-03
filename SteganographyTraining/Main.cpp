@@ -10,24 +10,6 @@
 #include "UIManager.h"
 #include "Steganography.h"
 
-void OpenFileDialog(HWND hwnd, OPENFILENAME ofn)
-{
-    char szFile[260];
-    ZeroMemory(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn);
-    ofn.hwndOwner = hwnd;
-    ofn.lpstrFile = (LPWSTR)szFile;
-    ofn.lpstrFile[0] = '\0';
-    ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFilter = L"Bitmap image (.bmp)\0*.bmp";
-    ofn.nFilterIndex = 1;
-    ofn.lpstrFileTitle = NULL;
-    ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = NULL;
-    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-    GetOpenFileName(&ofn);
-}
-
 wchar_t* ConvertToWChar(const char* charStr) {
     if (charStr == nullptr) {
         return nullptr;
@@ -69,10 +51,8 @@ std::wstring ConvertSlashesToDoubleBackslashes(const std::wstring& inputText) {
     return std::wstring(outputStr.begin(), outputStr.end());
 }
 
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
     ClientApp* clientApp = new ClientApp();
-    OPENFILENAME ofn;
 
     // Init Window / UIManager
     if (!clientApp->Initialize(hInstance)) {
@@ -123,11 +103,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     UIButton* bottomRightButtonEncodeFile = uiManager->CreateButton(hwndWindow, 14, halfWidth + 180, panelHeight / 2 + 160, 200, 60, buttonColor, "1. Encode file");
     UIButton* bottomRightButtonSaveFile = uiManager->CreateButton(hwndWindow, 15, halfWidth + 400, panelHeight / 2 + 160, 200, 60, buttonColor, "2. Save file");
 
-
     // Apply Interactions To button
     {
         // Load File Btn
-        buttonLoadFile->SetOnClickCallback([clientApp, hwndWindow, halfWidth, ofn]() {
+        buttonLoadFile->SetOnClickCallback([clientApp, hwndWindow, halfWidth]() {
             std::wstring inputText = clientApp->GetUIManager()->GetText(hwndWindow, 6);
 
             if (!inputText.empty()) {
@@ -203,14 +182,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             }
             else
                 MessageBoxA(hwndWindow, "Cannot write file on gived path", "ERROR", MB_OK | MB_ICONINFORMATION);
-            });
-
-
-        
-
+            });  
     }
-    
-
     // Set Control WM_COMMAND active
     clientApp->isControlEventStarted = true;
 
@@ -218,23 +191,3 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     return 0;
 }
-
-
-
-//BitmapImage image;
-//if (!image.Load("C:\\Users\\wchapron\\source\\repos\\WilliamChapron\\SteganographyTraining\\bmp_test.bmp")) {
-//    std::cerr << "Erreur : Impossible de charger l'image." << std::endl;
-//    return 1;
-//}
-//else {
-//    std::cout << "Image chargée avec succès." << std::endl;
-//}
-
-//if (!image.Save("C:\\Users\\wchapron\\source\\repos\\WilliamChapron\\SteganographyTraining\\bmp_test_copy.bmp")) {
-//    std::cerr << "Erreur : Impossible de sauvegarder l'image." << std::endl;
-//    return 1;
-//}
-//else {
-//    std::cout << "Image sauvegardée avec succès." << std::endl;
-//}
-

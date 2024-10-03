@@ -8,8 +8,6 @@
 #include "UIElement.h"
 #include "BitmapImage.h"
 
-
-
 Window::Window(HINSTANCE hInstance, ClientApp* clientApp) : m_hInstance(hInstance) {
     const wchar_t CLASS_NAME[] = L"Sample Window Class";
     WNDCLASS wc = {};
@@ -145,17 +143,9 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
             EndPaint(elementHwnd, &psElement);
         }
 
-        
-
-        // Show img
-        //clientApp->m_bitmapImgLoader = new BitmapImage();
-        //clientApp->m_bitmapImgLoader->Load("C:\\Users\\wchapron\\Documents\\GitHub\\SteganographyTraining\\bmp_test.bmp");
         BitmapImage* img = clientApp->m_bitmapImgLoader;
 
         if (clientApp->m_bitmapImgLoader != nullptr) {
-
-            std::wcout << "Bit map show" << std::endl;
-
             HBITMAP hBitmap = nullptr;
             HDC imgDeviceContext = nullptr;
             HDC mainDeviceContext = hdc;
@@ -197,18 +187,6 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
                 SRCCOPY
             );
 
-            //BitBlt(
-            //    mainDeviceContext, 
-            //    0,                 
-            //    0,                 
-            //    img->m_infoHeader->biWidth, 
-            //    img->m_infoHeader->biHeight,
-            //    imgDeviceContext,   
-            //    0,                  
-            //    0,                  
-            //    SRCCOPY
-            //);
-
             SelectObject(imgDeviceContext, oldBitmap);
             DeleteDC(imgDeviceContext);
         }
@@ -217,73 +195,6 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
         EndPaint(hwnd, &ps);
         break;
     }
-
-    //case WM_PAINT: {
-    //    PAINTSTRUCT ps;
-    //    HDC hdc = BeginPaint(hwnd, &ps);
-    //    // Check & Init part
-    //    ClientApp* clientApp = (ClientApp*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-    //    if (!clientApp) {
-    //        EndPaint(hwnd, &ps);
-    //        break;
-    //    }
-    //    // Show img
-    //    clientApp->m_bitmapImgLoader = new BitmapImage();
-    //    clientApp->m_bitmapImgLoader->loadFile("C:\\Users\\wchapron\\Documents\\GitHub\\SteganographyTraining\\mario.bmp");
-    //    BitmapImage* img = clientApp->m_bitmapImgLoader;
-    //    std::cout << img->m_fileHeader->bfSize;
-    //    /*if (clientApp->m_bitmapImgLoader != nullptr) {*/
-
-    //        std::wcout << "Bit map show" << std::endl;
-
-    //        HBITMAP hBitmap = nullptr;
-    //        HDC imgDeviceContext = nullptr;
-
-    //        hBitmap = CreateDIBitmap(
-    //            hdc,
-    //            img->m_infoHeader,
-    //            CBM_INIT,
-    //            img->m_pixels,
-    //            img->m_info,
-    //            DIB_RGB_COLORS
-    //        );
-
-    //        if (!hBitmap) {
-    //            MessageBox(NULL, L"Erreur lors de la création du bitmap", L"Erreur", MB_OK);
-    //            return 0;
-    //        }
-    //        imgDeviceContext = CreateCompatibleDC(hdc);
-    //        if (!imgDeviceContext) {
-    //            MessageBox(NULL, L"Erreur lors de la création du Device Context", L"Erreur", MB_OK);
-    //            DeleteObject(hBitmap);
-    //            return 0;
-    //        }
-
-    //        HBITMAP oldBitmap = (HBITMAP)SelectObject(imgDeviceContext, hBitmap);
-
-    //        BOOL result = StretchBlt
-    //        (
-    //            hdc,
-    //            100,
-    //            100,
-    //            400,
-    //            400,
-    //            imgDeviceContext,
-    //            0,
-    //            0,
-    //            img->m_infoHeader->biWidth,
-    //            img->m_infoHeader->biHeight,
-    //            SRCCOPY
-    //        );
-
-    //        SelectObject(imgDeviceContext, oldBitmap);
-    //        DeleteDC(imgDeviceContext);
-    //    /*}*/
-
-
-    //    EndPaint(hwnd, &ps);
-    //    break;
-    //}
 
     case WM_DESTROY: {
         PostQuitMessage(0);
@@ -295,8 +206,6 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
     }
     return 0;
 }
-
-
 
 void Window::Run() {
     MSG msg = {};
