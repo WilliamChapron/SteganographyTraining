@@ -28,20 +28,28 @@ void OpenFileDialog(HWND hwnd, OPENFILENAME ofn)
     GetOpenFileName(&ofn);
 }
 
-const char* WStringToCString(const std::wstring& wstr) {
-    // Calculate the size needed for the narrow string
+wchar_t* ConvertToWChar(const char* charStr) {
+    if (charStr == nullptr) {
+        return nullptr;
+    }
+    size_t charStrLen = strlen(charStr);
+    size_t wideCharBufferSize = charStrLen + 1;
+    wchar_t* wideCharStr = new wchar_t[wideCharBufferSize];
+    size_t convertedChars = 0;
+    errno_t err = mbstowcs_s(&convertedChars, wideCharStr, wideCharBufferSize, charStr, _TRUNCATE);
+    if (err != 0) {
+        delete[] wideCharStr;
+        return nullptr;
+    }
+    return wideCharStr;
+}
+
+const char* ConvertToCChar(const std::wstring& wstr) {
     int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), NULL, 0, NULL, NULL);
-
-    // Create a buffer for the narrow string
-    char* buffer = new char[size_needed + 1]; // +1 for null terminator
-
-    // Perform the actual conversion
+    char* buffer = new char[size_needed + 1];
     WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), buffer, size_needed, NULL, NULL);
-
-    // Null terminate the string
     buffer[size_needed] = '\0';
-
-    return buffer; // Remember to free this memory later!
+    return buffer;
 }
 
 std::wstring ConvertSlashesToDoubleBackslashes(const std::wstring& inputText) {
@@ -134,14 +142,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             //}
             
 
-            const char* loadCharBuffer = WStringToCString(inputText);
+            const char* loadCharBuffer = ConvertToCChar(inputText);
             if (clientApp->m_bitmapImgLoader->loadFile(loadCharBuffer)) {
-                std::cout << "JE SUIS BOB LENNON";
                 InvalidateRect(hwndWindow, NULL, TRUE); // Demande un redessin
                 const char* loadScndCharBuffer = Steganography::decode(clientApp->m_bitmapImgLoader);
-                std::cout << loadScndCharBuffer << std::endl;
-                if(loadScndCharBuffer != NULL)
-                    clientApp->GetUIManager()->SetText(hwndWindow, 2, (wchar_t*) loadScndCharBuffer);
+                if (loadScndCharBuffer != NULL)
+                {
+                    wchar_t* wLoadCharBuffer = ConvertToWChar(loadScndCharBuffer);
+                    clientApp->GetUIManager()->SetText(hwndWindow, 2, wLoadCharBuffer);
+                    delete[] wLoadCharBuffer;
+                }
                 else
                     clientApp->GetUIManager()->SetText(hwndWindow, 2, L"");
                 clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 330, 250, 200, 30, L"Image loaded Successfully");
@@ -149,49 +159,50 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             else {
                 MessageBoxA(hwndWindow, "No bmp file found", "ERROR", MB_OK | MB_ICONINFORMATION);
             }
+            delete[] loadCharBuffer;
             
             // Show encoded message if available
         });
 
         // Encode img Btn
         bottomRightButtonEncodeFile->SetOnClickCallback([clientApp, hwndWindow, halfWidth, panelHeight]() {
-            std::wstring inputText = clientApp->GetUIManager()->GetText(hwndWindow, 14);
+            std::wstring inputText = clientApp->GetUIManager()->GetText(hwndWindow, 11);
             if (!inputText.empty()) {
                 inputText = ConvertSlashesToDoubleBackslashes(inputText);
                 //MessageBox(hwndWindow, inputText.c_str(), L"Input Text", MB_OK);
             }
             
             if (clientApp->m_bitmapImgLoader) {
-                const char* charBuffer = WStringToCString(inputText);
+                const char* charBuffer = ConvertToCChar(inputText);
                 InvalidateRect(hwndWindow, NULL, TRUE); // Demande un redessin
                 Steganography::encode(clientApp->m_bitmapImgLoader, charBuffer);
                 const char* scndCharBuffer = Steganography::decode(clientApp->m_bitmapImgLoader);
                 if (scndCharBuffer != NULL)
                 {
-                    clientApp->GetUIManager()->SetText(hwndWindow, 2, (wchar_t*)scndCharBuffer);
+                    wchar_t* wCharBuffer = ConvertToWChar(scndCharBuffer);
+                    clientApp->GetUIManager()->SetText(hwndWindow, 2, wCharBuffer);
                     clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 180, 240 + panelHeight / 2 - 20, 200, 30, L"Image Encoded Successfully");
+                    delete[] wCharBuffer;
                 }
                 else
                     clientApp->GetUIManager()->SetText(hwndWindow, 2, L"Sentence too long to be encoded");
+                delete[] charBuffer;
             }
-            else {
-                MessageBoxA(hwndWindow, "No loaded bmp", "ERROR", MB_OK | MB_ICONINFORMATION);
-            }
-            
-            
+            else 
+                MessageBoxA(hwndWindow, "No loaded bmp", "ERROR", MB_OK | MB_ICONINFORMATION);     
             });
-
-
-
-
         // Save File btn
         bottomRightButtonSaveFile->SetOnClickCallback([clientApp, hwndWindow, halfWidth, panelHeight]() {
-            std::wstring inputText = clientApp->GetUIManager()->GetText(hwndWindow, 14);
+            std::wstring inputText = clientApp->GetUIManager()->GetText(hwndWindow, 13);
             if (!inputText.empty()) {
                 inputText = ConvertSlashesToDoubleBackslashes(inputText);
-                //MessageBox(hwndWindow, inputText.c_str(), L"Input Text", MB_OK);
             }
-            clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 400, 240 + panelHeight / 2 - 20, 200, 30, L"Image Saved Successfully");
+            if (clientApp->m_bitmapImgLoader->saveFile(ConvertToCChar(inputText)))
+            {
+                clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 400, 240 + panelHeight / 2 - 20, 200, 30, L"Image Saved Successfully");
+            }
+            else
+                MessageBoxA(hwndWindow, "Cannot write file on gived path", "ERROR", MB_OK | MB_ICONINFORMATION);
             });
 
 

@@ -22,7 +22,7 @@ Window::Window(HINSTANCE hInstance, ClientApp* clientApp) : m_hInstance(hInstanc
     m_hwnd = CreateWindowEx(
         0,
         CLASS_NAME,
-        L"Sample Window",
+        L"Steganography",
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
         NULL,

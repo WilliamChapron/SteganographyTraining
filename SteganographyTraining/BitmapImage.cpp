@@ -42,6 +42,9 @@ bool BitmapImage::saveFile(const char* fileName)
 {
     FILE* file;
     fopen_s(&file, fileName, "wb");
+    if (file == NULL)
+        return 0;
+
     fwrite(m_fileHeader, sizeof(uint8_t), 14, file);
     fwrite(m_infoHeader, sizeof(uint8_t), 40, file);
     fwrite(m_pixels, sizeof(uint8_t), m_fileHeader->bfSize, file);

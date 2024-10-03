@@ -99,10 +99,11 @@ void Steganography::encode(BitmapImage* input, const char* sentence)
 	encodeNbChar(buffer,iterator);
 	//Putting an end character == 0x1F to know where end the secret message
 	encodeChar(buffer, END_CHAR, iterator + NB_BITS_RESERVED);
-};
+}
 
 char* Steganography::decode(BitmapImage* input) {
 	uint8_t* buffer = input->m_pixels;
+
 	if (getNbChar(buffer) > input->m_fileHeader->bfSize - NB_BITS_RESERVED)
 		return NULL;
 
@@ -112,10 +113,12 @@ char* Steganography::decode(BitmapImage* input) {
 	int iterator = 0;
 	char* result = new char[getNbChar(buffer) + 1];
 	result[iterator++] = getChar(buffer, NB_BITS_RESERVED + iterator);
-	while (result[iterator-1] != END_CHAR)
-	{
+
+	while (result[iterator - 1] != END_CHAR) {
 		result[iterator++] = getChar(buffer, NB_BITS_RESERVED + iterator);
 	}
-	result[getNbChar(buffer) + 1] = '\0';
+
+	result[iterator] = '\0';
+
 	return result;
-};
+}
