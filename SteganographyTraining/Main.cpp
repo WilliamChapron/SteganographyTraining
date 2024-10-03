@@ -110,7 +110,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
             if (!inputText.empty()) {
                 inputText = ConvertSlashesToDoubleBackslashes(inputText);
-                MessageBox(hwndWindow, inputText.c_str(), L"Input Text", MB_OK);
             }
 
             clientApp->m_bitmapImgLoader = new BitmapImage();
@@ -121,9 +120,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             //}
             clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 330, 250, 200, 30, L"Image Uploaded Successfully");
 
-            if (clientApp->m_bitmapImgLoader->loadFile("C:\\Users\\wchapron\\Documents\\GitHub\\SteganographyTraining\\mario.bmp")) {
+            char *buffer;
+            std::wcstombs(test,inputText,)
+            if (clientApp->m_bitmapImgLoader->loadFile(test)){
                 InvalidateRect(hwndWindow, NULL, TRUE); // Demande un redessin
-                
             }           
 
             // Show encoded message if available

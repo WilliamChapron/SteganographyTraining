@@ -12,8 +12,12 @@ Steganography::~Steganography() { };
 void Steganography::encodeNbChar(uint8_t* data, int nbChar)
 {
 	for (int i = 0; i < NB_BITS_RESERVED; i++)
+	{
 		if (data[i] & 1 ^ nbChar >> i & 1)
+		{
 			data[i] ^= 1;
+		}
+	}
 }
 
 void Steganography::encodeChar(uint8_t* data, char Char, int place)
@@ -51,7 +55,7 @@ int Steganography::getNbChar(uint8_t* data)
 	int result = 0;
 	for (int i = 0; i < NB_BITS_RESERVED; i++)
 		if (data[i] & 1 ^ result >> i & 1)
-			result ^= (i << 1);
+			result ^= (1 << i);
 	return result;
 }
 
@@ -78,7 +82,7 @@ char Steganography::getChar(uint8_t* data, int place)
 
 	if (result >> 6 & 1 ^ data[(place * 6) + 2] >> 0 & 1)
 		result ^= (1 << 6);
-
+	
 	return result;
 }
 
@@ -92,7 +96,7 @@ void Steganography::encode(BitmapImage* input, const char* sentence)
 		iterator++;
 	}
 
-	encodeNbChar(buffer, iterator);
+	encodeNbChar(buffer,iterator);
 	//Putting an end character == 0x1F to know where end the secret message
 	encodeChar(buffer, END_CHAR, iterator + NB_BITS_RESERVED);
 };
@@ -101,16 +105,18 @@ char* Steganography::decode(BitmapImage* input) {
 	uint8_t* buffer = input->m_pixels;
 	if (!(getChar(buffer, getNbChar(buffer) + NB_BITS_RESERVED) == END_CHAR))
 	{
+		std::cout << "nbChar : " << getNbChar(buffer) << std::endl;
+		std::cout << getChar(buffer, getNbChar(buffer) + NB_BITS_RESERVED) << " : " << (int)getChar(buffer, getNbChar(buffer) + NB_BITS_RESERVED) << std::endl;
+		std::cout << END_CHAR << " : " << (int)END_CHAR << std::endl;
 		return NULL;
 	}
 
 	int iterator = 0;
 	char* result = new char[getNbChar(buffer) + 1];
-	result[iterator] = getChar(buffer, NB_BITS_RESERVED + iterator++);
-	std::cout << result[iterator];
-	while (result[iterator - 1] != END_CHAR)
+	result[iterator++] = getChar(buffer, NB_BITS_RESERVED + iterator);
+	while (result[iterator-1] != END_CHAR)
 	{
-		result[iterator] = getChar(buffer, NB_BITS_RESERVED + iterator++);
+		result[iterator++] = getChar(buffer, NB_BITS_RESERVED + iterator);
 	}
 	result[iterator] = '\0';
 	return result;
