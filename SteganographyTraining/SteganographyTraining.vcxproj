@@ -135,6 +135,7 @@
     <ClCompile Include="ShowBitmapImg.cpp" />
     <ClCompile Include="Steganography.cpp" />
     <ClCompile Include="SteganographyTraining.cpp" />
+    <ClCompile Include="Thread.cpp" />
     <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="BitmapImage.h" />
     <ClInclude Include="ClientApp.h" />
     <ClInclude Include="Steganography.h" />
+    <ClInclude Include="Thread.h" />
     <ClInclude Include="UIElement.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="Utils.h" />

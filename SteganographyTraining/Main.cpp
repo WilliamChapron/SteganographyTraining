@@ -10,6 +10,8 @@
 #include "UIManager.h"
 #include "Steganography.h"
 
+#include "Thread.h"
+
 void OpenFileDialog(HWND hwnd, OPENFILENAME ofn)
 {
     char szFile[260];
@@ -121,10 +123,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             //}
             clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 330, 250, 200, 30, L"Image Uploaded Successfully");
 
-            if (clientApp->m_bitmapImgLoader->loadFile("C:\\Users\\wchapron\\Documents\\GitHub\\SteganographyTraining\\mario.bmp")) {
-                InvalidateRect(hwndWindow, NULL, TRUE); // Demande un redessin
-                
-            }           
+            clientApp->m_bitmapImgLoader->loadFile("C:\\Users\\wchapron\\Documents\\GitHub\\SteganographyTraining\\mario.bmp");
 
             // Show encoded message if available
             
@@ -166,6 +165,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     // Set Control WM_COMMAND active
     clientApp->isControlEventStarted = true;
+
+    Thread thread;
+
+    thread.Init();
 
     clientApp->GetWindow()->Run();
 
