@@ -22,7 +22,7 @@ bool BitmapImage::loadFile(const char* fileName)
     FILE* file;
     fopen_s(&file, fileName, "rb");
     if (file == NULL)
-        throw "NoBMP";
+        return 0;
     fseek(file, 0, SEEK_END);
     int size = ftell(file);
     uint8_t bufferHeader[54] = {};

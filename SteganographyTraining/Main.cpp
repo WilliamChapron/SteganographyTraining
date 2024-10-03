@@ -28,6 +28,22 @@ void OpenFileDialog(HWND hwnd, OPENFILENAME ofn)
     GetOpenFileName(&ofn);
 }
 
+const char* WStringToCString(const std::wstring& wstr) {
+    // Calculate the size needed for the narrow string
+    int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), NULL, 0, NULL, NULL);
+
+    // Create a buffer for the narrow string
+    char* buffer = new char[size_needed + 1]; // +1 for null terminator
+
+    // Perform the actual conversion
+    WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), buffer, size_needed, NULL, NULL);
+
+    // Null terminate the string
+    buffer[size_needed] = '\0';
+
+    return buffer; // Remember to free this memory later!
+}
+
 std::wstring ConvertSlashesToDoubleBackslashes(const std::wstring& inputText) {
     std::string inputStr(inputText.begin(), inputText.end());
     std::string outputStr;
@@ -80,7 +96,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     // Left
     UIPanel* leftPanel = uiManager->CreatePanel(hwndWindow, 1, 50, 90, halfWidth - 100, panelHeight - 200, leftPanelColor, "");
-    UITextField* leftLabel = uiManager->CreateTextField(hwndWindow, 2, windowWidth / 6 - 100, windowHeight - 100, 300, 60, RGB(255,255,255), "Decode Message : No message ", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | WS_VSCROLL | ES_AUTOVSCROLL, true);
+    UITextField* leftLabel = uiManager->CreateTextField(hwndWindow, 2, windowWidth / 6 - 100, windowHeight - 100, 300, 60, RGB(255,255,255), "", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | WS_VSCROLL | ES_AUTOVSCROLL, true);
 
     // Top right
     UIPanel* topRightPanel = uiManager->CreatePanel(hwndWindow, 3, halfWidth + 20, 50, halfWidth, panelHeight / 2 - 100, topRightPanelColor, "");
@@ -88,8 +104,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     UILabel* topRightInputFieldLabel = uiManager->CreateLabel(hwndWindow, 5, halfWidth + 300, 120, 200, 30, topRightPanelColor, "File path : ");
     UITextField* topRightInputField = uiManager->CreateTextField(hwndWindow, 6, halfWidth + 250, 150, 300, 30, textFieldColor, "");
     UIButton* buttonLoadFile = uiManager->CreateButton(hwndWindow, 7, halfWidth + 300, 200, 200, 60, buttonColor, "Load the file");
-
-
 
     // Bottom right
     UIPanel* Panel = uiManager->CreatePanel(hwndWindow, 8, halfWidth + 20, panelHeight / 2, halfWidth, panelHeight / 2 - 100, bottomRightPanelColor, "");
@@ -118,21 +132,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             //    InvalidateRect(hwndWindow, NULL, TRUE); // Demande un redessin
             //    clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 330, 250, 200, 30, L"Image Uploaded Successfully");
             //}
-            clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 330, 250, 200, 30, L"Image Uploaded Successfully");
-
-            char *buffer;
-            std::wcstombs(test,inputText,)
-            if (clientApp->m_bitmapImgLoader->loadFile(test)){
-                InvalidateRect(hwndWindow, NULL, TRUE); // Demande un redessin
-            }           
-
-            // Show encoded message if available
             
-            //clientApp->GetUIManager()->SetText(hwndWindow, 2, (wchar_t*)Steganography::Decode(clientApp->m_bitmapImgLoader));
-            //std::cout << Steganography::decode(clientApp->m_bitmapImgLoader);
-            clientApp->GetUIManager()->SetText(hwndWindow, 2, L"test");
 
-
+            const char* loadCharBuffer = WStringToCString(inputText);
+            if (clientApp->m_bitmapImgLoader->loadFile(loadCharBuffer)) {
+                std::cout << "JE SUIS BOB LENNON";
+                InvalidateRect(hwndWindow, NULL, TRUE); // Demande un redessin
+                const char* loadScndCharBuffer = Steganography::decode(clientApp->m_bitmapImgLoader);
+                std::cout << loadScndCharBuffer << std::endl;
+                if(loadScndCharBuffer != NULL)
+                    clientApp->GetUIManager()->SetText(hwndWindow, 2, (wchar_t*) loadScndCharBuffer);
+                else
+                    clientApp->GetUIManager()->SetText(hwndWindow, 2, L"");
+                clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 330, 250, 200, 30, L"Image loaded Successfully");
+            }           
+            else {
+                MessageBoxA(hwndWindow, "No bmp file found", "ERROR", MB_OK | MB_ICONINFORMATION);
+            }
+            
+            // Show encoded message if available
         });
 
         // Encode img Btn
@@ -142,7 +160,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                 inputText = ConvertSlashesToDoubleBackslashes(inputText);
                 //MessageBox(hwndWindow, inputText.c_str(), L"Input Text", MB_OK);
             }
-            clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 180, 240 + panelHeight / 2 - 20, 200, 30, L"Image Encoded Successfully");
+            
+            if (clientApp->m_bitmapImgLoader) {
+                const char* charBuffer = WStringToCString(inputText);
+                InvalidateRect(hwndWindow, NULL, TRUE); // Demande un redessin
+                Steganography::encode(clientApp->m_bitmapImgLoader, charBuffer);
+                const char* scndCharBuffer = Steganography::decode(clientApp->m_bitmapImgLoader);
+                if (scndCharBuffer != NULL)
+                {
+                    clientApp->GetUIManager()->SetText(hwndWindow, 2, (wchar_t*)scndCharBuffer);
+                    clientApp->GetUIManager()->CreateButtonWithTimer(hwndWindow, halfWidth + 180, 240 + panelHeight / 2 - 20, 200, 30, L"Image Encoded Successfully");
+                }
+                else
+                    clientApp->GetUIManager()->SetText(hwndWindow, 2, L"Sentence too long to be encoded");
+            }
+            else {
+                MessageBoxA(hwndWindow, "No loaded bmp", "ERROR", MB_OK | MB_ICONINFORMATION);
+            }
+            
+            
             });
 
 

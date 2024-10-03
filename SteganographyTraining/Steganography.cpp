@@ -88,6 +88,7 @@ char Steganography::getChar(uint8_t* data, int place)
 
 void Steganography::encode(BitmapImage* input, const char* sentence)
 {
+	std::cout << sentence;
 	int iterator = 0;
 	uint8_t* buffer = input->m_pixels;
 	while (sentence[iterator] != NULL)
@@ -95,7 +96,6 @@ void Steganography::encode(BitmapImage* input, const char* sentence)
 		encodeChar(buffer, sentence[iterator], iterator + NB_BITS_RESERVED);
 		iterator++;
 	}
-
 	encodeNbChar(buffer,iterator);
 	//Putting an end character == 0x1F to know where end the secret message
 	encodeChar(buffer, END_CHAR, iterator + NB_BITS_RESERVED);
@@ -103,13 +103,11 @@ void Steganography::encode(BitmapImage* input, const char* sentence)
 
 char* Steganography::decode(BitmapImage* input) {
 	uint8_t* buffer = input->m_pixels;
-	if (!(getChar(buffer, getNbChar(buffer) + NB_BITS_RESERVED) == END_CHAR))
-	{
-		std::cout << "nbChar : " << getNbChar(buffer) << std::endl;
-		std::cout << getChar(buffer, getNbChar(buffer) + NB_BITS_RESERVED) << " : " << (int)getChar(buffer, getNbChar(buffer) + NB_BITS_RESERVED) << std::endl;
-		std::cout << END_CHAR << " : " << (int)END_CHAR << std::endl;
+	if (getNbChar(buffer) > input->m_fileHeader->bfSize - NB_BITS_RESERVED)
 		return NULL;
-	}
+
+	if (!(getChar(buffer, getNbChar(buffer) + NB_BITS_RESERVED) == END_CHAR))
+		return NULL;
 
 	int iterator = 0;
 	char* result = new char[getNbChar(buffer) + 1];
@@ -118,6 +116,6 @@ char* Steganography::decode(BitmapImage* input) {
 	{
 		result[iterator++] = getChar(buffer, NB_BITS_RESERVED + iterator);
 	}
-	result[iterator] = '\0';
+	result[getNbChar(buffer) + 1] = '\0';
 	return result;
 };
