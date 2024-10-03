@@ -1,123 +1,67 @@
+#include <stdio.h>
+#include <iostream>
 #include "BitmapImage.h"
 
-BitmapImage::BitmapImage() : m_pPixelData(nullptr), m_rowPadded(0)
+BitmapImage::BitmapImage()
 {
-}
-
+    m_fileHeader = new BITMAPFILEHEADER;
+    m_infoHeader = new BITMAPINFOHEADER;
+    m_info = new BITMAPINFO;
+    m_pixels = nullptr;
+};
 BitmapImage::~BitmapImage()
 {
-    if (m_pPixelData) {
-        delete[] m_pPixelData;
-    }
-}
+    delete[] m_pixels;
+    delete m_fileHeader;
+    delete m_infoHeader;
+    delete m_info;
+};
 
-bool BitmapImage::Load(const std::string& filePath)
+bool BitmapImage::loadFile(const char* fileName)
 {
-    std::cout << "Tentative de chargement de l'image BMP depuis : " << filePath << std::endl;
+    FILE* file;
+    fopen_s(&file, fileName, "rb");
+    if (file == NULL)
+        throw "NoBMP";
+    fseek(file, 0, SEEK_END);
+    int size = ftell(file);
+    uint8_t bufferHeader[54] = {};
+    m_pixels = new uint8_t[size - 54];
+    fseek(file, 0, SEEK_SET);
+    fread(bufferHeader, sizeof(uint8_t), 54, file);
 
-    std::ifstream file(filePath, std::ios::binary);
-    if (!file) {
-        std::cout << "Erreur : Impossible d'ouvrir le fichier " << filePath << std::endl;
-        return false;
-    }
+    m_fileHeader->bfType = *(uint16_t*)(bufferHeader);
+    m_fileHeader->bfSize = *(uint32_t*)(bufferHeader + 2);
+    m_fileHeader->bfReserved1 = *(uint16_t*)(bufferHeader + 6);
+    m_fileHeader->bfReserved2 = *(uint16_t*)(bufferHeader + 8);
+    m_fileHeader->bfOffBits = *(uint32_t*)(bufferHeader + 10);
 
-    if (!ReadFileHeader(file)) {
-        return false;
-    }
+    m_infoHeader->biSize = *(uint32_t*)(bufferHeader + 14);
+    m_infoHeader->biWidth = *(uint32_t*)(bufferHeader + 18);
+    m_infoHeader->biHeight = *(uint32_t*)(bufferHeader + 22);
+    m_infoHeader->biPlanes = *(uint16_t*)(bufferHeader + 26);
+    m_infoHeader->biBitCount = *(uint16_t*)(bufferHeader + 28);
+    m_infoHeader->biCompression = *(uint32_t*)(bufferHeader + 30);
+    m_infoHeader->biSizeImage = *(uint32_t*)(bufferHeader + 34);
+    m_infoHeader->biXPelsPerMeter = *(uint32_t*)(bufferHeader + 38);
+    m_infoHeader->biYPelsPerMeter = *(uint32_t*)(bufferHeader + 42);
+    m_infoHeader->biClrUsed = *(uint32_t*)(bufferHeader + 46);
+    m_infoHeader->biClrImportant = *(uint32_t*)(bufferHeader + 50);
 
-    if (!ReadInfoHeader(file)) {
-        return false;
-    }
+    m_info = (BITMAPINFO*)m_infoHeader;
 
-    return ReadPixelData(file);
-}
-
-bool BitmapImage::ReadFileHeader(std::ifstream& file)
-{
-    file.read(reinterpret_cast<char*>(&m_fileHeader), sizeof(m_fileHeader));
-
-    if (m_fileHeader.bfType != 0x4D42) {
-        std::cout << "Erreur : Le fichier n'est pas un fichier BMP valide." << std::endl;
-        return false;
-    }
-
-    std::cout << "File Header:" << std::endl;
-    std::cout << "  bfType: " << m_fileHeader.bfType << std::endl;
-    std::cout << "  bfSize: " << m_fileHeader.bfSize << std::endl;
-    std::cout << "  bfReserved1: " << m_fileHeader.bfReserved1 << std::endl;
-    std::cout << "  bfReserved2: " << m_fileHeader.bfReserved2 << std::endl;
-    std::cout << "  bfOffBits: " << m_fileHeader.bfOffBits << std::endl;
-
+    fread(m_pixels, sizeof(uint8_t), size - m_fileHeader->bfOffBits, file);
+    fclose(file);
     return true;
 }
 
-bool BitmapImage::ReadInfoHeader(std::ifstream& file)
+bool BitmapImage::saveFile(const char* fileName)
 {
-    file.read(reinterpret_cast<char*>(&m_infoHeader), sizeof(m_infoHeader));
-
-    std::cout << "Info Header:" << std::endl;
-    std::cout << "  biSize: " << m_infoHeader.biSize << std::endl;
-    std::cout << "  biWidth: " << m_infoHeader.biWidth << std::endl;
-    std::cout << "  biHeight: " << m_infoHeader.biHeight << std::endl;
-    std::cout << "  biPlanes: " << m_infoHeader.biPlanes << std::endl;
-    std::cout << "  biBitCount: " << m_infoHeader.biBitCount << std::endl;
-    std::cout << "  biCompression: " << m_infoHeader.biCompression << std::endl;
-    std::cout << "  biSizeImage: " << m_infoHeader.biSizeImage << std::endl;
-    std::cout << "  biXPelsPerMeter: " << m_infoHeader.biXPelsPerMeter << std::endl;
-    std::cout << "  biYPelsPerMeter: " << m_infoHeader.biYPelsPerMeter << std::endl;
-    std::cout << "  biClrUsed: " << m_infoHeader.biClrUsed << std::endl;
-    std::cout << "  biClrImportant: " << m_infoHeader.biClrImportant << std::endl;
-
-    if (m_infoHeader.biBitCount != 24) {
-        std::cout << "Erreur! Seuls les fichiers BMP 24 bits sont supportes." << std::endl;
-        return false;
-    }
-
-    int bytesPerPixel = m_infoHeader.biBitCount / 8;
-    m_rowPadded = (m_infoHeader.biWidth * bytesPerPixel);
-
-    return true;
-}
-
-bool BitmapImage::ReadPixelData(std::ifstream& file)
-{
-    m_pPixelData = new uint8_t[m_rowPadded * m_infoHeader.biHeight];
-    file.read(reinterpret_cast<char*>(m_pPixelData), m_rowPadded * m_infoHeader.biHeight);
-
-    std::cout << "Donnees de l'image chargees avec succes." << std::endl;
-    std::cout << "Le fichier BMP est au format 24 bits." << std::endl;
-    std::cout << "Image BMP chargee correctement." << std::endl;
-
-    return true;
-}
-
-bool BitmapImage::Save(const std::string& filePath)
-{
-    std::ofstream file(filePath, std::ios::binary);
-    if (!file) {
-        std::cout << "Erreur : Impossible de sauvegarder l'image." << std::endl;
-        return false;
-    }
-
-    WriteFileHeader(file);
-    WriteInfoHeader(file);
-    WritePixelData(file);
-
-    std::cout << "Image sauvegardee avec succes dans : " << filePath << std::endl;
-    return true;
-}
-
-void BitmapImage::WriteFileHeader(std::ofstream& file)
-{
-    file.write(reinterpret_cast<char*>(&m_fileHeader), sizeof(m_fileHeader));
-}
-
-void BitmapImage::WriteInfoHeader(std::ofstream& file)
-{
-    file.write(reinterpret_cast<char*>(&m_infoHeader), sizeof(m_infoHeader));
-}
-
-void BitmapImage::WritePixelData(std::ofstream& file)
-{
-    file.write(reinterpret_cast<char*>(m_pPixelData), m_rowPadded * m_infoHeader.biHeight);
+    FILE* file;
+    fopen_s(&file, fileName, "wb");
+    fwrite(m_fileHeader, sizeof(uint8_t), 14, file);
+    fwrite(m_infoHeader, sizeof(uint8_t), 40, file);
+    fwrite(m_pixels, sizeof(uint8_t), m_fileHeader->bfSize, file);
+    fclose(file);
+    return 1;
 }
